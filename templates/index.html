@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot de EmprendeIA</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      min-height: 100vh;
+      color: #f1f1f1;
+    }
+
+    /* Contenedor superior */
+    .top-container {
+      width: 90%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 290px;
+      height: 180px;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 10px;
+    }
+
+    /* Barra de navegación */
+    .navbar {
+      width: 100%;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .nav-links li a {
+      text-decoration: none;
+      color: #f1f1f1;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .nav-links li a:hover {
+      color: #00bf63;
+    }
+
+    /* Tema claro para navbar */
+    body.light .nav-links li a {
+      color: #222;
+    }
+
+    body.light .nav-links li a:hover {
+      color: #8c52ff;
+    }
+
+    .user-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-icon {
+      width: 75px;
+      height: 75px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      padding: 2px;
+      background: rgba(30, 30, 30, 0.8);
+      backdrop-filter: blur(8px);
+      border: 2px solid transparent;
+      background-image: linear-gradient(#1a1a1a, #1a1a1a),
+        linear-gradient(135deg, #8c52ff, #00bf63);
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .user-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Chat principal */
+    .chat-wrapper {
+      width: 900px;
+      max-width: 100%;
+      padding: 0 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-container {
+      background: rgba(20, 20, 20, 0.9);
+      border-radius: 20px;
+      padding: 20px;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .chatbox {
+      flex: 1;
+      background: #121212;
+      border-radius: 14px;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      color: #f1f1f1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 18px;
+      border-radius: 14px;
+      word-wrap: break-word;
+      line-height: 1.4;
+      font-size: 0.95rem;
+      animation: fadeIn 0.3s ease-in-out;
+      border: 2px solid transparent;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+      background: #1e1e1e;
+      color: #f1f1f1;
+    }
+
+    .user {
+      align-self: flex-end;
+      border: 2px solid #00bf63;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bot {
+      align-self: flex-start;
+      border: 2px solid #8c52ff;
+      border-bottom-left-radius: 4px;
+    }
+
+    .input-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"],
+    button {
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      outline: none;
+      background: #1a1a1a;
+      font-size: 0.95rem;
+      color: #f1f1f1;
+      transition: all 0.3s ease;
+      background-clip: padding-box, border-box;
+      background-origin: border-box;
+      background-image: linear-gradient(#1a1a1a, #1a1a1a),
+        linear-gradient(135deg, #8c52ff, #00bf63);
+    }
+
+    input[type="text"] {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    input[type="text"]:focus {
+      box-shadow: 0 0 10px rgba(140, 82, 255, 0.6);
+    }
+
+    input[type="text"]::placeholder {
+      color: #888;
+    }
+
+    button {
+      flex: 0 0 auto;
+      cursor: pointer;
+      font-weight: 600;
+      color: #f1f1f1;
+    }
+
+    button:hover {
+      background-image: linear-gradient(135deg, #8c52ff, #00bf63);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(140, 82, 255, 0.7);
+    }
+
+    /* Botón de cambio de tema */
+    .theme-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, #8c52ff, #00bf63);
+      color: white;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .theme-btn:hover {
+      opacity: 0.85;
+    }
+
+    /* Tema claro */
+    body.light {
+      background: linear-gradient(135deg, #f1f1f1, #e4e4e4);
+      color: #222;
+    }
+
+    body.light .chat-container {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: #222;
+    }
+
+    body.light .chatbox {
+      background: #fff;
+      border: 1px solid #8c52ff;
+      color: #222;
+    }
+
+    body.light .message {
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    body.light input[type="text"],
+    body.light button {
+      background: #fff;
+      color: #222;
+      border: 1px solid #8c52ff;
+    }
+
+    body.light button:hover {
+      background: linear-gradient(135deg, #8c52ff, #00bf63);
+      color: white;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 📱 Responsividad */
+    @media (max-width: 1024px) {
+      .logo {
+        width: 220px;
+        height: auto;
+      }
+
+      .chat-container {
+        height: auto;
+        min-height: 400px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .nav-links {
+        gap: 15px;
+      }
+
+      .chat-wrapper {
+        width: 100%;
+        padding: 0 10px;
+      }
+
+      .chat-container {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .user-icon {
+        width: 55px;
+        height: 55px;
+      }
+
+      .theme-btn {
+        font-size: 1rem;
+        padding: 6px 10px;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .message {
+        max-width: 100%;
+        font-size: 0.9rem;
+      }
+
+      input[type="text"] {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+
+      button {
+        font-size: 0.9rem;
+        padding: 10px;
+      }
+    }
+
+    /* Footer */
+    .footer {
+      width: 100%;
+      margin-top: 40px;
+      background: rgba(20, 20, 20, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px 10px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .footer p {
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .footer-links li a {
+      text-decoration: none;
+      font-size: 0.9rem;
+      color: #f1f1f1;
+      transition: color 0.3s;
+    }
+
+    .footer-links li a:hover {
+      color: #00bf63;
+    }
+
+    /* Tema claro */
+    body.light .footer {
+      background: rgba(255, 255, 255, 0.95);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    body.light .footer p {
+      color: #444;
+    }
+
+    body.light .footer-links li a {
+      color: #222;
+    }
+
+    body.light .footer-links li a:hover {
+      color: #8c52ff;
+    }
+
+    /* Responsive footer */
+    @media (max-width: 480px) {
+      .footer-content {
+        gap: 8px;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Contenedor superior -->
+  <div class="top-container">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='img/img1.png') }}" alt="logo">
+    </div>
+    <div class="user-container">
+      <div class="user-icon"><img src="{{ url_for('static', filename='img/userbutters.png') }}" alt=""></div>
+      <button id="themeToggle" class="theme-btn">🌙</button>
+    </div>
+  </div>
+
+  <!-- Chat principal -->
+  <nav class="navbar">
+    <ul class="nav-links">
+      <li><a href="#">Inicio</a></li>
+      <li><a href="#">Servicios</a></li>
+      <li><a href="#">Cursos</a></li>
+      <li><a href="#">Contacto</a></li>
+      <li><a href="#">Blog</a></li>
+      <li><a href="#">¿Quienes somos?</a></li>
+    </ul>
+  </nav>
+
+  <div class="chat-wrapper">
+    <div class="chat-container">
+      <div class="chatbox" id="chatbox"></div>
+      <div class="input-container">
+        <input type="text" id="input" placeholder="Escribe tu mensaje..." />
+        <button id="sendBtn">Enviar</button>
+        <button id="stopBtn" title="detenerBot">⏹️</button>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2025 EmprendeIA. Todos los derechos reservados.</p>
+      <ul class="footer-links">
+        <li><a href="#">Política de privacidad</a></li>
+        <li><a href="#">Términos de uso</a></li>
+        <li><a href="#">Soporte</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    let stopBot = false;
+    const input = document.getElementById("input");
+    const chatbox = document.getElementById("chatbox");
+    const sendBtn = document.getElementById("sendBtn");
+    const stopBtn = document.getElementById("stopBtn");
+
+    sendBtn.addEventListener("click", sendMessage);
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    stopBtn.addEventListener("click", () => stopBot = true);
+
+    function addMessage(text, type) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", type);
+      msg.textContent = text;
+      chatbox.appendChild(msg);
+      chatbox.scrollTop = chatbox.scrollHeight;
+      return msg;
+    }
+
+    async function sendMessage() {
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage(message, "user");
+      input.value = "";
+      stopBot = false;
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+
+        const data = await response.json();
+        if (data.reply) {
+          const botMsg = addMessage("", "bot");
+          for (let char of data.reply) {
+            if (stopBot) break;
+            botMsg.textContent += char;
+            chatbox.scrollTop = chatbox.scrollHeight;
+            await new Promise(resolve => setTimeout(resolve, 30));
+          }
+        } else {
+          addMessage("Hubo un error...", "bot");
+        }
+      } catch (error) {
+        addMessage("Error al conectar con el servidor.", "bot");
+        console.error(error);
+      }
+    }
+
+    const themeBtn = document.getElementById("themeToggle");
+    if (localStorage.getItem("theme") === "light") {
+      document.body.classList.add("light");
+      themeBtn.textContent = "☀️";
+    }
+
+    themeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+      if (document.body.classList.contains("light")) {
+        themeBtn.textContent = "☀️";
+        localStorage.setItem("theme", "light");
+      } else {
+        themeBtn.textContent = "🌙";
+        localStorage.setItem("theme", "dark");
+      }
+    });
+  </script>
+</body>
+
+</html>
